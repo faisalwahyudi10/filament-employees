@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages;
-use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Filament\Resources\EmployeeResource\Widgets\EmployeeStatsOverview;
 use App\Models\City;
 use App\Models\Country;
@@ -12,6 +11,7 @@ use App\Models\State;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -24,6 +24,9 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Database\Eloquent\Model;
+
 use stdClass;
 
 class EmployeeResource extends Resource
@@ -75,6 +78,10 @@ class EmployeeResource extends Resource
                     TextInput::make('zip_code')->required()->maxLength(7),
                     DatePicker::make('birth_date')->required(),
                     DatePicker::make('date_hired')->required(),
+                    FileUpload::make('photo')
+                        ->image()
+                        ->imagePreviewHeight('120')
+                        ->maxSize(1024)
                 ])
             ]);
     }
@@ -93,6 +100,11 @@ class EmployeeResource extends Resource
                         );
                     }
                 ),
+                ImageColumn::make('photo')
+                    ->width(50)
+                    ->height(50)
+                    ->circular()
+                    ->url(static fn (Model $record) => static::getUrl('view', ['record' => $record])),
                 TextColumn::make('first_name')->sortable()->searchable(),
                 TextColumn::make('last_name')->sortable()->searchable(),
                 TextColumn::make('department.name')->sortable()->searchable(),
@@ -110,7 +122,7 @@ class EmployeeResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
@@ -124,13 +136,14 @@ class EmployeeResource extends Resource
             EmployeeStatsOverview::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListEmployees::route('/'),
             'create' => Pages\CreateEmployee::route('/create'),
+            'view' => Pages\ViewEmployee::route('/{record}'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
         ];
-    }    
+    }
 }

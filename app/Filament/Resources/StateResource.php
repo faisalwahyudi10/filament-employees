@@ -16,6 +16,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use stdClass;
@@ -34,7 +35,9 @@ class StateResource extends Resource
                 Card::make()
                 ->schema([
                     Select::make('country_id')
-                        ->relationship('country', 'name')->required(),
+                        ->relationship('country', 'name')
+                        ->searchable()
+                        ->required(),
                     TextInput::make('name')->required()->maxLength(255),
                 ])
             ]);
@@ -60,7 +63,7 @@ class StateResource extends Resource
                 TextColumn::make('updated_at')->dateTime()
             ])
             ->filters([
-                //
+                SelectFilter::make('country')->relationship('country', 'name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -69,7 +72,7 @@ class StateResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
@@ -77,7 +80,7 @@ class StateResource extends Resource
             CitiesRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -85,5 +88,5 @@ class StateResource extends Resource
             'create' => Pages\CreateState::route('/create'),
             'edit' => Pages\EditState::route('/{record}/edit'),
         ];
-    }    
+    }
 }

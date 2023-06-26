@@ -36,6 +36,7 @@ class CityResource extends Resource
                 ->schema([
                     Select::make('state_id')
                         ->relationship('state', 'name')
+                        ->searchable()
                         ->required(),
                     TextInput::make('name')
                         ->required()
@@ -73,14 +74,14 @@ class CityResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             EmployeesRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -88,5 +89,5 @@ class CityResource extends Resource
             'create' => Pages\CreateCity::route('/create'),
             'edit' => Pages\EditCity::route('/{record}/edit'),
         ];
-    }    
+    }
 }

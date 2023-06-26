@@ -21,6 +21,7 @@ class Employee extends Model
         'zip_code',
         'birth_date',
         'date_hired',
+        'photo',
     ];
 
     public function country()
