@@ -7,9 +7,11 @@ use App\Filament\Resources\CountryResource\RelationManagers;
 use App\Filament\Resources\CountryResource\RelationManagers\EmployeesRelationManager;
 use App\Filament\Resources\CountryResource\RelationManagers\StatesRelationManager;
 use App\Models\Country;
+use App\Models\Employee;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -18,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 use stdClass;
 
 class CountryResource extends Resource
@@ -63,12 +66,29 @@ class CountryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(function (Model $record) {
+                        $employee = Employee::where('country_id', $record->id)->first();
+                        if ($employee) {
+                            Notification::make()
+                                ->title('Failed')
+                                ->danger()
+                                ->body('Data Negara tidak dapat dihapus karena terdapat pengguna dengan tinggal disini.')
+                                ->send();
+                        } else {
+                            Country::find($record->id)->delete();
+                            Notification::make()
+                                ->title('Data berhasil dihapus')
+                                ->success()
+                                ->send();
+                        }
+                    }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
@@ -76,13 +96,13 @@ class CountryResource extends Resource
             StatesRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListCountries::route('/'),
-            'create' => Pages\CreateCountry::route('/create'),
-            'edit' => Pages\EditCountry::route('/{record}/edit'),
+            // 'create' => Pages\CreateCountry::route('/create'),
+            // 'edit' => Pages\EditCountry::route('/{record}/edit'),
         ];
-    }    
+    }
 }

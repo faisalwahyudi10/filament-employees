@@ -43,4 +43,20 @@ class Employee extends Model
     {
         return $this->belongsTo(Department::class);
     }
+
+    public static function showImage($id)
+    {
+        // $post = Asset::findOrFail($id);
+        // if (!$post->getFirstMedia('asset_picture')) {
+        //     // $post->setMedia(['picture' => 'images/default.png']);
+        //     $src = 'images/default.png';
+        // }else {
+        //     $image = $post->getFirstMedia('asset_picture');
+        //     $src = $image->getUrl();
+        // }
+        // return $src;
+
+        $post = Employee::findOrFail($id);
+        return $post;
+    }
 }

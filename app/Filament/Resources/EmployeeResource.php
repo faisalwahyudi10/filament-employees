@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages;
+use App\Filament\Resources\EmployeeResource\Widgets\EmployeeChart;
 use App\Filament\Resources\EmployeeResource\Widgets\EmployeeStatsOverview;
 use App\Models\City;
 use App\Models\Country;
@@ -80,7 +81,7 @@ class EmployeeResource extends Resource
                     DatePicker::make('date_hired')->required(),
                     FileUpload::make('photo')
                         ->image()
-                        ->imagePreviewHeight('120')
+                        ->imagePreviewHeight('220')
                         ->maxSize(1024)
                 ])
             ]);
@@ -116,7 +117,7 @@ class EmployeeResource extends Resource
                 SelectFilter::make('department')->relationship('department', 'name')
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -134,6 +135,7 @@ class EmployeeResource extends Resource
     {
         return [
             EmployeeStatsOverview::class,
+            EmployeeChart::class
         ];
     }
 

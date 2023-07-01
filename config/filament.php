@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Resources\EmployeeResource\Widgets\EmployeeChart;
 use App\Filament\Resources\EmployeeResource\Widgets\EmployeeStatsOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -143,6 +144,7 @@ return [
             Widgets\AccountWidget::class,
             Widgets\FilamentInfoWidget::class,
             EmployeeStatsOverview::class,
+            EmployeeChart::class,
         ],
     ],
 
